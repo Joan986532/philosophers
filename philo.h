@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:48:38 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/03/31 13:42:57 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/04/11 17:31:52 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,14 @@
 
 typedef struct s_philo
 {
-	int	numb_of_philos;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	notepme;
+	int	n_phil;
+	int	tt_die;
+	int	tt_eat;
+	int	tt_slp;
+	int	nt_eat;
 }		t_philo;
 
-int	ft_atoi_safe(char *nptr);
+int	ft_atoi_philo(char *nptr);
+int	main(int argc, char **argv);
+
 #endif
