@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:47:17 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/11 17:31:50 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/04/21 14:30:52 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ int	ft_parsing(char **argv, t_philo *data)
 
 void	*routine_eat(void *arg)
 {
-	int	i;
+	pthread_mutex_t	mutex;
+	int				i;
 
 	i = *(int *)arg;
-	sleep(1);
 	printf("philo %d is eating\n", i);
 	return (0);
 }
@@ -47,7 +47,6 @@ void	*routine_sleep(void *arg)
 	int	i;
 
 	i = *(int *)arg;
-	sleep(1);
 	printf("philo %d is sleeping\n", i);
 	return (0);
 }
@@ -57,16 +56,15 @@ void	*routine_die(void *arg)
 	int	i;
 
 	i = *(int *)arg;
-	sleep(1);
 	printf("philo %d is dying\n", i);
 	return (0);
 }
 
 int	main(int argc, char **argv)
 {
-	pthread_t	*th;
-	t_philo		data;
-	int			i;
+	pthread_t		*th;
+	t_philo			data;
+	int				i;
 
 	i = 0;
 	if (argc != 6)
