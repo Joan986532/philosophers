@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:47:17 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/21 14:30:52 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/04/24 20:23:01 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	ft_parsing(char **argv, t_philo *data)
 {
+	data->actual = 0;
+	data->stop = 0;
 	data->n_phil = ft_atoi_philo(argv[1]);
 	if (data->n_phil == -1)
 		return (-1);
@@ -32,31 +34,22 @@ int	ft_parsing(char **argv, t_philo *data)
 	return (0);
 }
 
-void	*routine_eat(void *arg)
+void	*routine(void *arg)
 {
-	pthread_mutex_t	mutex;
-	int				i;
+	t_philo			*data;
+	int				lunch;
 
-	i = *(int *)arg;
-	printf("philo %d is eating\n", i);
-	return (0);
-}
-
-void	*routine_sleep(void *arg)
-{
-	int	i;
-
-	i = *(int *)arg;
-	printf("philo %d is sleeping\n", i);
-	return (0);
-}
-
-void	*routine_die(void *arg)
-{
-	int	i;
-
-	i = *(int *)arg;
-	printf("philo %d is dying\n", i);
+	lunch = 0;
+	data = (t_philo *)arg;
+	while (lunch < data->nt_eat && data->stop == 0)
+	{
+		printf("%d has taken a fork\n", data->actual);
+		printf("%d is sleeping\n", data->actual);
+		printf("%d is eating\n", data->actual);
+		printf("%d is thinking\n", data->actual);
+		printf("%d died\n", data->actual);
+		lunch++;
+	}
 	return (0);
 }
 
@@ -64,26 +57,32 @@ int	main(int argc, char **argv)
 {
 	pthread_t		*th;
 	t_philo			data;
-	int				i;
 
-	i = 0;
 	if (argc != 6)
 		return (1);
 	if (ft_parsing(argv, &data) == -1)
 		return (1);
-	th = malloc(sizeof(int) * data.n_phil);
+	th = malloc(sizeof(int) * data.n_phil + 1); //+ 1 for control thread
+	pthread_mutex_init(&data.mutex, NULL);
 	printf("times each philosophers must eat: %d\n", data.nt_eat);
-	while (i < data.nt_eat)
+	while (data.actual < data.n_phil)
 	{
-		if (pthread_create(&th[i], NULL, &routine_eat, &i) != 0)
+		if (pthread_create(&th[data.actual], NULL, &routine, &data) != 0)
+		{
+			free(th);
 			return (1);
-		if (pthread_create(&th[i], NULL, &routine_sleep, &i) != 0)
-			return (1);
-		if (pthread_create(&th[i], NULL, &routine_die, &i) != 0)
-			return (1);
-		if (pthread_join(th[i], NULL) != 0)
-			return (1);
-		i++;
+		}
+		data.actual++;
 	}
+	while (data.actual > 0)
+	{
+		if (pthread_join(th[data.actual], NULL) != 0)
+		{
+			free(th);
+			return (1);
+		}
+		data.actual--;
+	}
+	pthread_mutex_destroy(&data.mutex);
 	return (0);
 }

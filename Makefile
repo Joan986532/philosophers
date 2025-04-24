@@ -6,7 +6,7 @@
 #    By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/12 16:49:14 by jnauroy           #+#    #+#              #
-#    Updated: 2025/04/11 17:31:55 by jnauroy          ###   ########.fr        #
+#    Updated: 2025/04/24 19:05:30 by jnauroy          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ LIBFT = libft_philo/libft.a
 
 OBJECTS = $(SOURCES:.c=.o)
 
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -fsanitize=thread -g -Wall -Wextra -Werror
 
 #------------------------------------------------------------------------------#
 

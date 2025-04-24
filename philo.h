@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:48:38 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/21 14:30:52 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/04/24 20:23:02 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,16 @@
 
 typedef struct s_philo
 {
-	pthread_t	thread;
-	int			n_phil;
-	int			tt_die;
-	int			tt_eat;
-	int			tt_slp;
-	int			nt_eat;
-}		t_philo;
+	pthread_t		thread;
+	int				n_phil;
+	int				tt_die;
+	int				tt_eat;
+	int				tt_slp;
+	int				nt_eat;
+	int				actual;
+	int				stop;
+	pthread_mutex_t	mutex;
+}					t_philo;
 
 int	ft_atoi_philo(char *nptr);
 int	main(int argc, char **argv);
