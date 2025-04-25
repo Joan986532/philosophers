@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:47:17 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/21 14:30:52 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/04/25 18:15:26 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 int	ft_parsing(char **argv, t_philo *data)
 {
+	data->actual = 1;
+	data->stop = 0;
+	data->lunches = 0;
 	data->n_phil = ft_atoi_philo(argv[1]);
 	if (data->n_phil == -1)
 		return (-1);
@@ -32,31 +35,37 @@ int	ft_parsing(char **argv, t_philo *data)
 	return (0);
 }
 
-void	*routine_eat(void *arg)
+void	*routine(void *arg)
 {
-	pthread_mutex_t	mutex;
-	int				i;
+	t_philo	*data;
+	int		i;
+	int		num;	
 
-	i = *(int *)arg;
-	printf("philo %d is eating\n", i);
+	data = (t_philo *)arg;
+	i = 0;
+	pthread_mutex_lock(data->mutex);
+	num = data->actual;
+	printf("%sPhilo %d%s\n", GREEN, num, NC);
+	pthread_mutex_unlock(data->mutex);
+	while (i < data->nt_eat)
+	{
+		printf("%d has taken a fork\n", num);
+		printf("%d has taken a fork\n", num);
+		printf("%d is eating\n", num);
+		printf("%d is sleeping\n", num);
+		printf("%d is thinking\n", num);
+		printf("%d died\n", num);
+		printf("%sLunches: [ %d ]%s\n", YELLOW, data->lunches, NC);
+		data->lunches++;
+		i++;
+		usleep(1);
+	}
 	return (0);
 }
 
-void	*routine_sleep(void *arg)
+void	*routine_manager(void *arg)
 {
-	int	i;
-
-	i = *(int *)arg;
-	printf("philo %d is sleeping\n", i);
-	return (0);
-}
-
-void	*routine_die(void *arg)
-{
-	int	i;
-
-	i = *(int *)arg;
-	printf("philo %d is dying\n", i);
+	(void)arg;
 	return (0);
 }
 
@@ -64,26 +73,49 @@ int	main(int argc, char **argv)
 {
 	pthread_t		*th;
 	t_philo			data;
-	int				i;
 
-	i = 0;
 	if (argc != 6)
 		return (1);
 	if (ft_parsing(argv, &data) == -1)
 		return (1);
-	th = malloc(sizeof(int) * data.n_phil);
-	printf("times each philosophers must eat: %d\n", data.nt_eat);
-	while (i < data.nt_eat)
+	th = malloc(sizeof(pthread_t) * data.n_phil + 1);
+	if (!th)
+		return (1);
+	data.mutex = malloc(sizeof(pthread_mutex_t) * data.n_phil);
+	if (!data.mutex)
+		return (1);
+	pthread_mutex_init(data.mutex, NULL);
+	while (data.actual <= data.n_phil + 1)
 	{
-		if (pthread_create(&th[i], NULL, &routine_eat, &i) != 0)
-			return (1);
-		if (pthread_create(&th[i], NULL, &routine_sleep, &i) != 0)
-			return (1);
-		if (pthread_create(&th[i], NULL, &routine_die, &i) != 0)
-			return (1);
-		if (pthread_join(th[i], NULL) != 0)
-			return (1);
-		i++;
+		if (data.actual != data.n_phil + 1)
+		{
+			if (pthread_create(&th[data.actual - 1], NULL, &routine, &data) != 0)
+				return (1);
+			usleep(1000);
+			printf("Thread %d has started\n", data.actual);
+		}
+		else
+		{
+			if (pthread_create(th + (data.actual - 1), NULL, &routine_manager, &data) != 0)
+				return (1);
+			printf("%sThread manager %d has started%s\n", GREEN, data.actual + 1, NC);
+		}
+		data.actual++;
 	}
+	data.actual = 1;
+	usleep(500);
+	while (data.actual <= data.n_phil + 1)
+	{
+		if (pthread_join(th[data.actual - 1], NULL) != 0)
+			return (1);
+		printf("Thread %d has stopped\n", data.actual);
+		data.actual++;
+	}
+	printf("%sLunch [%d]%s\n", YELLOW, data.lunches, NC);
+	usleep(500);
+	printf("Number of philosophers: %s%d%s\n", YELLOW, data.n_phil, NC);
+	printf("N of times each philosophers must eat: %s%d%s\n", YELLOW, data.nt_eat, NC);
+	printf("Total lunches: %s%d%s\n", YELLOW, data.lunches, NC);
+	pthread_mutex_destroy(data.mutex);
 	return (0);
 }
