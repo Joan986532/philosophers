@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:48:38 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/25 18:04:09 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/04/28 18:19:50 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@
 
 typedef struct s_philo
 {
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*l_fork;
+}				t_philo;
+
+typedef struct s_data
+{
 	pthread_t			thread;
 	int					n_phil;
 	int					tt_die;
@@ -35,10 +41,17 @@ typedef struct s_philo
 	int					actual;
 	int					stop;
 	int					lunches;
-	pthread_mutex_t		*mutex;
-}						t_philo;
+	int					dead;
+	pthread_mutex_t		*forks;
+}						t_data;
 
-int	ft_atoi_philo(char *nptr);
-int	main(int argc, char **argv);
+void	ft_free_philo(t_philo **philo, int limit);
+void	*routine_manager(void *arg);
+void	join_threads(t_data *data, pthread_t *th);
+void	*routine(void *arg);
+void	create_threads(t_data *data, pthread_t *th);
+int		ft_parsing(char **argv, t_data *data);
+int		ft_atoi_philo(char *nptr);
+void	print_messages(t_data *data);
 
 #endif
