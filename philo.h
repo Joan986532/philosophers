@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:27:53 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/01 10:29:28 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/01 18:04:55 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,7 @@
 # define GREEN	"\e[32m"
 # define RED	"\e[31m"
 
-typedef struct s_mutex
-{
-	pthread_mutex_t	mutex;
-	int				lock;
-}					t_mutex;		
-
-typedef struct s_philo
-{
-	pthread_mutex_t	r_fork;
-	pthread_mutex_t	l_fork;
-	int				num;
-	int				lock_r;
-	int				lock_l;
-}					t_philo;
+typedef struct s_philo	t_philo;
 
 typedef struct s_data
 {
@@ -46,18 +33,25 @@ typedef struct s_data
 	int					tt_eat;
 	int					tt_slp;
 	int					nt_eat;
-	int					actual;
 	int					stop;
 	int					lunches;
 	int					dead;
 	t_philo				*philos;
-	pthread_mutex_t		philo_num;
-	pthread_mutex_t		*print;
-	t_mutex				*forks;
+	pthread_mutex_t		print;
+	pthread_mutex_t		*forks;
 }						t_data;
 
+typedef struct s_philo
+{
+	pthread_mutex_t	r_fork;
+	pthread_mutex_t	l_fork;
+	int				index;
+	int				dead;
+	int				meals;
+	t_data			*data;
+}					t_philo;
+
 void	connect_to_mutex(t_data *data);
-void	numerote_philo(t_data *data);
 void	ft_free_philo(t_philo **philo, int limit);
 void	*routine_manager(void *arg);
 void	join_threads(t_data *data, pthread_t *th);

@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 15:40:00 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/30 17:42:54 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/01 18:36:03 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
@@ -18,11 +18,10 @@ void	create_threads(t_data *data, pthread_t *th)
 	i = 0;
 	while (i < data->n_phil)
 	{
-		if (pthread_create(th + i, NULL,
-				&routine, data) != 0)
+		if (pthread_create(th + i, NULL, &routine, &data->philos[i]) != 0)
 			exit(1);
 		usleep(500);
-		printf("Thread %d has started\n", i + 1);
+		printf("Thread %d has started\n", i);
 		i++;
 	}
 }
@@ -32,11 +31,11 @@ void	join_threads(t_data *data, pthread_t *th)
 	int	i;
 
 	i = 0;
-	while (i < data->n_phil)
+	while (i <= data->n_phil)
 	{
 		if (pthread_join(th[i], NULL) != 0)
 			exit(1);
-		printf("Thread %d has stopped\n", data->actual);
+		printf("Thread %d has stopped\n", i);
 		i++;
 	}
 }
@@ -56,51 +55,39 @@ void	*routine_manager(void *arg)
 	return (0);
 }
 
+void	eating(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->l_fork);
+	printf("%d has taken a fork\n", philo->index);
+	pthread_mutex_lock(&philo->r_fork);
+	printf("%d has taken a fork\n", philo->index);
+	printf("%d is eating\n", philo->index);
+	usleep(philo->data->tt_eat);
+	pthread_mutex_unlock(&philo->l_fork);
+	pthread_mutex_unlock(&philo->r_fork);
+}
+
 void	*routine(void *arg)
 {
-	t_data	*data;
-	int		person;
-	int		i;
+	t_philo	philo;
 
-	i = 0;
-	data = (t_data *)arg;
-	pthread_mutex_lock(&data->philo_num);
-	person = data->actual + 1;
-	data->actual++;
-	pthread_mutex_unlock(&data->philo_num);
-	printf("%sPhilo %d%s\n", GREEN, person, NC);
+	philo = *(t_philo *)arg;
+	printf("%sPhilo %d%s\n", GREEN, philo.index, NC);
+	if (philo.index % 2 == 0)
+		usleep(philo.data->tt_eat);
 	while (1)
 	{
-		if (data->forks[person - 1].lock == 0)
-		{
-			pthread_mutex_lock(&data->philos[person - 1].l_fork);
-			data->forks[person - 1].lock = 1;
-			printf("%d has taken a fork\n", person);
-			if (data->forks[person - 1].lock == 0)
-			{
-				pthread_mutex_lock(&data->philos[person - 1].r_fork);
-				data->philos[person - 1].lock_r = 1;
-				printf("%d has taken a fork\n", person);
-				printf("%d is eating\n", person);
-				usleep(1000);
-				pthread_mutex_unlock(&data->philos[person - 1].l_fork);
-				pthread_mutex_unlock(&data->philos[person - 1].r_fork);
-				data->philos[person - 1].lock_l = 0;
-				data->philos[person - 1].lock_r = 0;
-			}
-			else
-			{
-				pthread_mutex_unlock(&data->philos[person - 1].l_fork);
-				data->philos[person - 1].lock_r = 0;
-			}
-		}
-		printf("%d is sleeping\n", person);
-		usleep(1000);
-		printf("%d is thinking\n", person);
-		usleep(1000);
-		// printf("%d died\n", person);
-		printf("%sLunches: [ %d ]%s\n", YELLOW, data->lunches, NC);
-		data->lunches++;
+		eating(&philo);
+		printf("%d is sleeping\n", philo.index);
+		usleep(philo.data->tt_slp);
+		printf("%d is thinking\n", philo.index);
+		usleep(philo.data->tt_die);
+		pthread_mutex_lock(&philo.data->print);
+		printf("%sLunches: [ %d ]%s\n", YELLOW, philo.meals, NC);
+		pthread_mutex_unlock(&philo.data->print);
+		philo.meals++;
+		if (philo.data->dead == 1 || philo.data->stop)
+			break ;
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/01 10:31:29 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/01 18:35:09 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 		return (1);
 	}
 	data->philos = *philo;
-	numerote_philo(data);
-	data->forks = malloc(sizeof(t_mutex) * data->n_phil);
+	data->forks = malloc(sizeof(pthread_mutex_t) * data->n_phil);
 	if (!data->forks)
 	{
 		free(th);
@@ -35,8 +34,24 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 		return (1);
 	}
 	connect_to_mutex(data);
-	pthread_mutex_init(data->forks, NULL);
 	return (0);
+}
+
+int	ft_all_meals(t_philo **philo)
+{
+	int	total;
+	int	limit;
+	int	i;
+
+	i = 0;
+	limit = philo[i]->data->n_phil;
+	total = 0;
+	while (i < limit)
+	{
+		total += philo[i]->meals;
+		i++;
+	}
+	return (total);
 }
 
 int	main(int argc, char **argv)
@@ -44,24 +59,38 @@ int	main(int argc, char **argv)
 	pthread_t	*th;
 	t_data		data;
 	t_philo		*philo;
+	int			i;
 
 	if (argc != 6)
 		return (1);
 	if (init_data(&philo, argv, &data, &th))
 		return (1);
-	pthread_mutex_init(&data.philo_num, NULL);
+	pthread_mutex_init(&data.print, NULL);
 	create_threads(&data, th);
-	data.actual = 0;
 	while (1)
 	{
-		if (data.dead > 0)
-			exit(0);
+		i = 0;
+		while (i < data.n_phil)
+		{
+			if (data.philos[i].dead > 0)
+			{
+				data.dead = 1;
+				break ;
+			}
+			i++;
+		}
 		if (data.lunches >= data.nt_eat * data.n_phil)
-			break ;
+		{
+			if (ft_all_meals(&data.philos) >= data.nt_eat)
+			{
+				data.stop = 1;
+				break ;
+			}
+		}
 	}
 	printf("%sLunches [%d]%s\n", YELLOW, data.lunches, NC);
 	join_threads(&data, th);
-	print_messages(&data);
 	pthread_mutex_destroy(data.forks);
+	print_messages(&data);
 	return (0);
 }

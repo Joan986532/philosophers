@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 10:40:51 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/30 17:27:14 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/01 17:33:47 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
@@ -99,7 +99,6 @@ int	ft_atoi_philo(char *nptr)
 int	ft_parsing(char **argv, t_data *data)
 {
 	data->dead = 0;
-	data->actual = 0;
 	data->stop = 0;
 	data->lunches = 0;
 	data->n_phil = ft_atoi_philo(argv[1]);
