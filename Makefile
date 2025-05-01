@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/03/12 16:49:14 by jnauroy           #+#    #+#              #
-#    Updated: 2025/04/24 19:05:30 by jnauroy          ###   ########.fr        #
+#    Created: 2025/05/01 10:27:31 by jnauroy           #+#    #+#              #
+#    Updated: 2025/05/01 10:27:35 by jnauroy          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,10 @@ HEAD_DIR = headers
 NAME = philo
 
 SOURCES = $(SRC_DIR)/philo.c \
-		  $(SRC_DIR)/philo_utils.c
+		  $(SRC_DIR)/philo_utils.c \
+		  $(SRC_DIR)/philo_utils2.c \
+		  $(SRC_DIR)/print_messages.c \
+		  $(SRC_DIR)/threads_routine.c
 
 LIBFT = libft_philo/libft.a
 

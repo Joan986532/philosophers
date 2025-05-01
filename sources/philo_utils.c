@@ -6,10 +6,9 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 10:40:51 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/21 14:30:53 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/04/30 17:27:14 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "../philo.h"
 
 int	parsing_sign(char *nptr, int *i)
@@ -95,4 +94,28 @@ int	ft_atoi_philo(char *nptr)
 		i++;
 	}
 	return (nb);
+}
+
+int	ft_parsing(char **argv, t_data *data)
+{
+	data->dead = 0;
+	data->actual = 0;
+	data->stop = 0;
+	data->lunches = 0;
+	data->n_phil = ft_atoi_philo(argv[1]);
+	if (data->n_phil == -1)
+		return (-1);
+	data->tt_die = ft_atoi_philo(argv[2]);
+	if (data->tt_die == -1)
+		return (-1);
+	data->tt_eat = ft_atoi_philo(argv[3]);
+	if (data->tt_eat == -1)
+		return (-1);
+	data->tt_slp = ft_atoi_philo(argv[4]);
+	if (data->tt_slp == -1)
+		return (-1);
+	data->nt_eat = ft_atoi_philo(argv[5]);
+	if (data->nt_eat == -1)
+		return (-1);
+	return (0);
 }

@@ -5,84 +5,63 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/12 16:47:17 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/04/24 20:23:01 by jnauroy          ###   ########.fr       */
+/*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
+/*   Updated: 2025/05/01 10:31:29 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 
-int	ft_parsing(char **argv, t_philo *data)
+int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 {
-	data->actual = 0;
-	data->stop = 0;
-	data->n_phil = ft_atoi_philo(argv[1]);
-	if (data->n_phil == -1)
-		return (-1);
-	data->tt_die = ft_atoi_philo(argv[2]);
-	if (data->tt_die == -1)
-		return (-1);
-	data->tt_eat = ft_atoi_philo(argv[3]);
-	if (data->tt_eat == -1)
-		return (-1);
-	data->tt_slp = ft_atoi_philo(argv[4]);
-	if (data->tt_slp == -1)
-		return (-1);
-	data->nt_eat = ft_atoi_philo(argv[5]);
-	if (data->nt_eat == -1)
-		return (-1);
-	return (0);
-}
-
-void	*routine(void *arg)
-{
-	t_philo			*data;
-	int				lunch;
-
-	lunch = 0;
-	data = (t_philo *)arg;
-	while (lunch < data->nt_eat && data->stop == 0)
+	if (ft_parsing(argv, data) == -1)
+		return (1);
+	*th = malloc(sizeof(pthread_t) * data->n_phil);
+	if (!*th)
+		return (1);
+	*philo = malloc(sizeof(t_philo) * data->n_phil);
+	if (!*philo)
 	{
-		printf("%d has taken a fork\n", data->actual);
-		printf("%d is sleeping\n", data->actual);
-		printf("%d is eating\n", data->actual);
-		printf("%d is thinking\n", data->actual);
-		printf("%d died\n", data->actual);
-		lunch++;
+		free(th);
+		return (1);
 	}
+	data->philos = *philo;
+	numerote_philo(data);
+	data->forks = malloc(sizeof(t_mutex) * data->n_phil);
+	if (!data->forks)
+	{
+		free(th);
+		ft_free_philo(philo, data->n_phil);
+		return (1);
+	}
+	connect_to_mutex(data);
+	pthread_mutex_init(data->forks, NULL);
 	return (0);
 }
 
 int	main(int argc, char **argv)
 {
-	pthread_t		*th;
-	t_philo			data;
+	pthread_t	*th;
+	t_data		data;
+	t_philo		*philo;
 
 	if (argc != 6)
 		return (1);
-	if (ft_parsing(argv, &data) == -1)
+	if (init_data(&philo, argv, &data, &th))
 		return (1);
-	th = malloc(sizeof(int) * data.n_phil + 1); //+ 1 for control thread
-	pthread_mutex_init(&data.mutex, NULL);
-	printf("times each philosophers must eat: %d\n", data.nt_eat);
-	while (data.actual < data.n_phil)
+	pthread_mutex_init(&data.philo_num, NULL);
+	create_threads(&data, th);
+	data.actual = 0;
+	while (1)
 	{
-		if (pthread_create(&th[data.actual], NULL, &routine, &data) != 0)
-		{
-			free(th);
-			return (1);
-		}
-		data.actual++;
+		if (data.dead > 0)
+			exit(0);
+		if (data.lunches >= data.nt_eat * data.n_phil)
+			break ;
 	}
-	while (data.actual > 0)
-	{
-		if (pthread_join(th[data.actual], NULL) != 0)
-		{
-			free(th);
-			return (1);
-		}
-		data.actual--;
-	}
-	pthread_mutex_destroy(&data.mutex);
+	printf("%sLunches [%d]%s\n", YELLOW, data.lunches, NC);
+	join_threads(&data, th);
+	print_messages(&data);
+	pthread_mutex_destroy(data.forks);
 	return (0);
 }
