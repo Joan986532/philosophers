@@ -6,7 +6,7 @@
 #    By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/12 16:49:14 by jnauroy           #+#    #+#              #
-#    Updated: 2025/04/28 11:53:33 by jnauroy          ###   ########.fr        #
+#    Updated: 2025/04/30 14:27:44 by jnauroy          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,9 @@ NAME = philo
 
 SOURCES = $(SRC_DIR)/philo.c \
 		  $(SRC_DIR)/philo_utils.c \
-		  $(SRC_DIR)/print_messages.c
+		  $(SRC_DIR)/philo_utils2.c \
+		  $(SRC_DIR)/print_messages.c \
+		  $(SRC_DIR)/threads_routine.c
 
 LIBFT = libft_philo/libft.a
 
