@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/01 18:35:09 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/02 17:44:55 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,24 +33,25 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 		ft_free_philo(philo, data->n_phil);
 		return (1);
 	}
-	connect_to_mutex(data);
+	init_philos(data);
 	return (0);
 }
 
-int	ft_all_meals(t_philo **philo)
+int	ft_all_meals(t_philo *philo)
 {
 	int	total;
 	int	limit;
 	int	i;
 
 	i = 0;
-	limit = philo[i]->data->n_phil;
+	limit = philo[i].data->n_phil;
 	total = 0;
 	while (i < limit)
 	{
-		total += philo[i]->meals;
+		total += philo[i].meals;
 		i++;
 	}
+	philo->data->lunches = total;
 	return (total);
 }
 
@@ -59,8 +60,10 @@ int	main(int argc, char **argv)
 	pthread_t	*th;
 	t_data		data;
 	t_philo		*philo;
+	int			flag;
 	int			i;
 
+	flag = 0;
 	if (argc != 6)
 		return (1);
 	if (init_data(&philo, argv, &data, &th))
@@ -74,18 +77,19 @@ int	main(int argc, char **argv)
 		{
 			if (data.philos[i].dead > 0)
 			{
+				printf("while\n");
 				data.dead = 1;
+				flag = 1;
 				break ;
 			}
 			i++;
 		}
-		if (data.lunches >= data.nt_eat * data.n_phil)
+		if (flag == 1)
+			break ;
+		if (ft_all_meals(data.philos) >= data.nt_eat * data.n_phil)
 		{
-			if (ft_all_meals(&data.philos) >= data.nt_eat)
-			{
-				data.stop = 1;
-				break ;
-			}
+			data.stop = 1;
+			break ;
 		}
 	}
 	printf("%sLunches [%d]%s\n", YELLOW, data.lunches, NC);

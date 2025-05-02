@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 18:13:43 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/01 18:32:06 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/02 15:14:16 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
@@ -24,7 +24,7 @@ void	ft_free_philo(t_philo **philo, int limit)
 	free(philo);
 }
 
-void	connect_to_mutex(t_data *data)
+void	init_philos(t_data *data)
 {
 	int	i;
 
@@ -43,4 +43,14 @@ void	connect_to_mutex(t_data *data)
 			data->philos[i].r_fork = data->forks[i + 1];
 		i++;
 	}
+}
+
+unsigned long	gettime_ms(struct timeval *time)
+{
+	unsigned long	time_ms;
+
+	gettimeofday(time, NULL);
+	time_ms = time->tv_sec * 1000;
+	time_ms += time->tv_usec / 1000;
+	return (time_ms);
 }
