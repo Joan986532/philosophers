@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:27:53 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/02 16:38:05 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/03 17:21:11 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ typedef struct s_data
 
 typedef struct s_philo
 {
-	pthread_mutex_t	r_fork;
-	pthread_mutex_t	l_fork;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*l_fork;
 	int				index;
 	int				dead;
 	int				meals;
@@ -54,15 +54,15 @@ typedef struct s_philo
 	unsigned long	last_meal;
 }					t_philo;
 
-unsigned long		gettime_ms(struct timeval *time);
-void	init_philos(t_data *data);
-void	ft_free_philo(t_philo **philo, int limit);
-void	*routine_manager(void *arg);
-void	join_threads(t_data *data, pthread_t *th);
-void	*routine(void *arg);
-void	create_threads(t_data *data, pthread_t *th);
-int		ft_parsing(char **argv, t_data *data);
-int		ft_atoi_philo(char *nptr);
-void	print_messages(t_data *data);
+unsigned long	gettime_ms(struct timeval *time);
+void			init_philos(t_data *data);
+void			ft_free_philo(t_philo **philo, int limit);
+void			*routine_manager(void *arg);
+void			join_threads(t_data *data, pthread_t *th);
+void			*routine(void *arg);
+void			create_threads(t_data *data, pthread_t *th);
+int				ft_parsing(char **argv, t_data *data);
+int				ft_atoi_philo(char *nptr);
+void			print_messages(t_data *data);
 
 #endif

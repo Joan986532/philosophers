@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/02 17:44:55 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/03 17:22:36 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,21 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 	return (0);
 }
 
-int	ft_all_meals(t_philo *philo)
+int	ft_all_meals(t_data *data)
 {
 	int	total;
 	int	limit;
 	int	i;
 
 	i = 0;
-	limit = philo[i].data->n_phil;
+	limit = data->n_phil;
 	total = 0;
 	while (i < limit)
 	{
-		total += philo[i].meals;
+		total += data->philos[i].meals;
 		i++;
 	}
-	philo->data->lunches = total;
+	data->lunches = total;
 	return (total);
 }
 
@@ -86,7 +86,7 @@ int	main(int argc, char **argv)
 		}
 		if (flag == 1)
 			break ;
-		if (ft_all_meals(data.philos) >= data.nt_eat * data.n_phil)
+		if (ft_all_meals(&data) >= data.nt_eat * data.n_phil)
 		{
 			data.stop = 1;
 			break ;

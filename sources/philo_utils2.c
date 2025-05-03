@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 18:13:43 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/02 15:14:16 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/03 17:21:05 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
@@ -36,11 +36,11 @@ void	init_philos(t_data *data)
 		data->philos[i].meals = 0;
 		data->philos[i].index = i + 1;
 		data->philos[i].data = data;
-		data->philos[i].l_fork = data->forks[i];
+		data->philos[i].l_fork = &data->forks[i];
 		if (i + 1 == data->n_phil)
-			data->philos[i].r_fork = data->forks[0];
+			data->philos[i].r_fork = &data->forks[0];
 		else
-			data->philos[i].r_fork = data->forks[i + 1];
+			data->philos[i].r_fork = &data->forks[i + 1];
 		i++;
 	}
 }
