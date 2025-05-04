@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/03 17:22:36 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/04 19:39:54 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,37 +61,15 @@ int	main(int argc, char **argv)
 	t_data		data;
 	t_philo		*philo;
 	int			flag;
-	int			i;
 
 	flag = 0;
-	if (argc != 6)
+	if (argc < 5 || argc > 6)
 		return (1);
 	if (init_data(&philo, argv, &data, &th))
 		return (1);
 	pthread_mutex_init(&data.print, NULL);
 	create_threads(&data, th);
-	while (1)
-	{
-		i = 0;
-		while (i < data.n_phil)
-		{
-			if (data.philos[i].dead > 0)
-			{
-				printf("while\n");
-				data.dead = 1;
-				flag = 1;
-				break ;
-			}
-			i++;
-		}
-		if (flag == 1)
-			break ;
-		if (ft_all_meals(&data) >= data.nt_eat * data.n_phil)
-		{
-			data.stop = 1;
-			break ;
-		}
-	}
+	manager(&data, argc);
 	printf("%sLunches [%d]%s\n", YELLOW, data.lunches, NC);
 	join_threads(&data, th);
 	pthread_mutex_destroy(data.forks);

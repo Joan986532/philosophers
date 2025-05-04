@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:27:53 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/03 17:21:11 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/04 19:38:42 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,11 @@ typedef struct s_philo
 	unsigned long	last_meal;
 }					t_philo;
 
+int				ft_all_meals(t_data *data);
 unsigned long	gettime_ms(struct timeval *time);
 void			init_philos(t_data *data);
 void			ft_free_philo(t_philo **philo, int limit);
-void			*routine_manager(void *arg);
+int				manager(t_data *data, int argc);
 void			join_threads(t_data *data, pthread_t *th);
 void			*routine(void *arg);
 void			create_threads(t_data *data, pthread_t *th);
