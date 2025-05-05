@@ -1,21 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_messages.c                                   :+:      :+:    :+:   */
+/*   threads.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 11:05:31 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/05 11:55:32 by jnauroy          ###   ########.fr       */
+/*   Created: 2025/05/05 11:53:01 by jnauroy           #+#    #+#             */
+/*   Updated: 2025/05/05 17:28:09 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "../philo.h"
 
-void	print_messages(t_data *data)
+void	create_threads(t_data *data, pthread_t *th)
 {
-	printf("Number of philosophers: %s%d%s\n", YELLOW, data->n_phil, NC);
-	printf("N of times each philosophers must eat: %s%d%s\n",
-		YELLOW, data->nt_eat, NC);
-	printf("Total lunches: %s%d%s\n", YELLOW, data->lunches, NC);
+	int	i;
+
+	i = 0;
+	data->start = gettime_ms();
+	while (i < data->n_phil)
+	{
+		if (pthread_create(th + i, NULL, &routine, &data->philos[i]) != 0)
+			exit(1);
+		i++;
+	}
+}
+
+void	join_threads(t_data *data, pthread_t *th)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->n_phil)
+	{
+		if (pthread_join(th[i], NULL) != 0)
+			exit(1);
+		i++;
+	}
 }

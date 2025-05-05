@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 18:13:43 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/04 19:39:07 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/05 17:28:19 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
@@ -35,6 +35,8 @@ void	init_philos(t_data *data)
 		data->philos[i].dead = 0;
 		data->philos[i].meals = 0;
 		data->philos[i].index = i + 1;
+		data->philos[i].tmp_time = 0;
+		data->philos[i].last_meal = 0;
 		data->philos[i].data = data;
 		data->philos[i].l_fork = &data->forks[i];
 		if (i + 1 == data->n_phil)
@@ -45,12 +47,13 @@ void	init_philos(t_data *data)
 	}
 }
 
-unsigned long	gettime_ms(struct timeval *time)
+unsigned long	gettime_ms(void)
 {
+	struct timeval	time;
 	unsigned long	time_ms;
 
-	gettimeofday(time, NULL);
-	time_ms = time->tv_sec * 1000;
-	time_ms += time->tv_usec / 1000;
+	gettimeofday(&time, NULL);
+	time_ms = time.tv_sec * 1000;
+	time_ms += time.tv_usec / 1000;
 	return (time_ms);
 }

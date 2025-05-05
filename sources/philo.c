@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/04 19:39:54 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/05 18:21:04 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,31 +37,15 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 	return (0);
 }
 
-int	ft_all_meals(t_data *data)
-{
-	int	total;
-	int	limit;
-	int	i;
-
-	i = 0;
-	limit = data->n_phil;
-	total = 0;
-	while (i < limit)
-	{
-		total += data->philos[i].meals;
-		i++;
-	}
-	data->lunches = total;
-	return (total);
-}
-
 int	main(int argc, char **argv)
 {
 	pthread_t	*th;
 	t_data		data;
 	t_philo		*philo;
 	int			flag;
+	int			i;
 
+	i = 0;
 	flag = 0;
 	if (argc < 5 || argc > 6)
 		return (1);
@@ -70,9 +54,16 @@ int	main(int argc, char **argv)
 	pthread_mutex_init(&data.print, NULL);
 	create_threads(&data, th);
 	manager(&data, argc);
-	printf("%sLunches [%d]%s\n", YELLOW, data.lunches, NC);
 	join_threads(&data, th);
 	pthread_mutex_destroy(data.forks);
-	print_messages(&data);
+	while (i < data.n_phil)
+	{
+		free(&th[i]);
+		free(&data.forks[i]);
+		i++;
+	}
+	free(th);
+	free(data.forks);
+	print_messages(&data); //tmp a retirer
 	return (0);
 }
