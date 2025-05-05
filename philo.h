@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:27:53 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/04 19:38:42 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/05 17:27:03 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ typedef struct s_data
 	int					nt_eat;
 	int					stop;
 	int					lunches;
-	int					dead;
+	unsigned long		start;
 	t_philo				*philos;
 	struct timeval		time;
 	pthread_mutex_t		print;
@@ -50,12 +50,11 @@ typedef struct s_philo
 	int				dead;
 	int				meals;
 	t_data			*data;
-	unsigned long	time_start;
+	unsigned long	tmp_time;
 	unsigned long	last_meal;
 }					t_philo;
 
-int				ft_all_meals(t_data *data);
-unsigned long	gettime_ms(struct timeval *time);
+unsigned long	gettime_ms(void);
 void			init_philos(t_data *data);
 void			ft_free_philo(t_philo **philo, int limit);
 int				manager(t_data *data, int argc);
