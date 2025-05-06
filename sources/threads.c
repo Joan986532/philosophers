@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 11:53:01 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/05 17:28:09 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/06 16:18:12 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
@@ -22,6 +22,7 @@ void	create_threads(t_data *data, pthread_t *th)
 		if (pthread_create(th + i, NULL, &routine, &data->philos[i]) != 0)
 			exit(1);
 		i++;
+		usleep(100);
 	}
 }
 
@@ -35,5 +36,6 @@ void	join_threads(t_data *data, pthread_t *th)
 		if (pthread_join(th[i], NULL) != 0)
 			exit(1);
 		i++;
+		usleep(100);
 	}
 }

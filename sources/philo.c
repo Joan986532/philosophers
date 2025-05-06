@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/05 18:21:04 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/06 15:50:47 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 	if (!data->forks)
 	{
 		free(th);
-		ft_free_philo(philo, data->n_phil);
+		ft_free_tab((void *)philo, data->n_phil);
 		return (1);
 	}
 	init_philos(data);
@@ -52,18 +52,15 @@ int	main(int argc, char **argv)
 	if (init_data(&philo, argv, &data, &th))
 		return (1);
 	pthread_mutex_init(&data.print, NULL);
+	pthread_mutex_init(&data.mutstop, NULL);
+	pthread_mutex_init(&data.check, NULL);
 	create_threads(&data, th);
 	manager(&data, argc);
 	join_threads(&data, th);
 	pthread_mutex_destroy(data.forks);
-	while (i < data.n_phil)
-	{
-		free(&th[i]);
-		free(&data.forks[i]);
-		i++;
-	}
-	free(th);
-	free(data.forks);
+	// ft_free_tab((void *)th, data.n_phil);
+	// ft_free_tab((void *)data.forks, data.n_phil);
+	// ft_free_tab((void *)philo, data.n_phil);
 	print_messages(&data); //tmp a retirer
 	return (0);
 }
