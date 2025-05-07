@@ -40,6 +40,7 @@ typedef struct s_data
 	pthread_mutex_t		print;
 	pthread_mutex_t		mutstop;
 	pthread_mutex_t		check;
+	pthread_mutex_t		meals;
 	pthread_mutex_t		*forks;
 }						t_data;
 
@@ -49,21 +50,20 @@ typedef struct s_philo
 	pthread_mutex_t	*l_fork;
 	int				index;
 	int				meals;
-	t_data			*data;
-	unsigned long	tmp_time;
+	t_data			*data;;
 	unsigned long	last_meal;
 }					t_philo;
 
 unsigned long	gettime_ms(void);
 void			init_philos(t_data *data);
-void			ft_free_philo(t_philo **philo, int limit);
 int				manager(t_data *data, int argc);
 void			join_threads(t_data *data, pthread_t *th);
 void			*routine(void *arg);
 void			create_threads(t_data *data, pthread_t *th);
 int				ft_parsing(char **argv, t_data *data);
 int				ft_atoi_philo(char *nptr);
-void			print_messages(t_data *data);
+void			print_status(t_data *data);
+int				print_messages(t_philo *philo, char *str);
 void			ft_free_tab(void **tab, int n);
 
 #endif

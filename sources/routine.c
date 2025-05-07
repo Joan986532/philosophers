@@ -11,73 +11,67 @@
 /* ************************************************************************** */
 #include "../philo.h"
 
-int	eating(t_philo *philo)
+int verify_while_action(t_philo *philo, unsigned long tt_action)
 {
-	unsigned long	eat_time;
+	unsigned long	timing;
+	unsigned long	time;
 
-	eat_time = 0;
-	philo->last_meal = gettime_ms();
-	pthread_mutex_lock(philo->l_fork);
-	pthread_mutex_lock(&philo->data->print);
-	printf("%.9lu %d has taken a fork\n",
-		philo->last_meal - philo->data->start, philo->index);
-	pthread_mutex_unlock(&philo->data->print);
-	pthread_mutex_lock(philo->r_fork);
-	pthread_mutex_lock(&philo->data->print);
-	printf("%.9lu %d has taken a fork\n",
-		philo->last_meal - philo->data->start, philo->index);
-	printf("%.9lu %d is eating\n",
-		philo->last_meal - philo->data->start, philo->index);
-	pthread_mutex_unlock(&philo->data->print);
-	philo->tmp_time = gettime_ms();
-	eat_time = gettime_ms() + (unsigned long)philo->data->tt_eat * 1000;
-	while (philo->tmp_time < eat_time)
+	time = gettime_ms();
+	timing = gettime_ms() + tt_action;
+	while (time < timing)
 	{
 		pthread_mutex_lock(&philo->data->mutstop);
 		if (philo->data->stop == 1)
 		{
 			pthread_mutex_unlock(&philo->data->mutstop);
-			pthread_mutex_unlock(philo->l_fork);
-			pthread_mutex_unlock(philo->r_fork);
 			return (1);
 		}
 		pthread_mutex_unlock(&philo->data->mutstop);
-		usleep(philo->data->tt_eat);
-		philo->tmp_time = gettime_ms();
+		usleep(tt_action);
+		time = gettime_ms();
 	}
+	return (0);
+}
+
+int	eating(t_philo *philo)
+{
+	int	result;
+
+	philo->last_meal = gettime_ms();
+	pthread_mutex_lock(philo->l_fork);
+	if (print_messages(philo, "has taken a fork"))
+	{
+		pthread_mutex_unlock(philo->l_fork);
+		return (1);
+	}
+	pthread_mutex_lock(philo->r_fork);
+	result = print_messages(philo, "has taken a fork");
+	if (!result)
+	{
+		result = print_messages(philo, "is eating");
+		pthread_mutex_lock(&philo->data->check);
+		philo->meals++;
+		pthread_mutex_unlock(&philo->data->check);
+	}
+	if (!result)
+		result = verify_while_action(philo, philo->data->tt_eat);
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
-	return (0);
+	return (result);
 }
 
 int	sleeping_thinking(t_philo *philo)
 {
-	unsigned int	sleep_time;
+	unsigned long	time;
 
-	pthread_mutex_lock(&philo->data->print);
-	philo->tmp_time = gettime_ms();
-	printf("%.9lu %d is sleeping\n",
-		philo->tmp_time - philo->data->start, philo->index);
-	pthread_mutex_unlock(&philo->data->print);
-	sleep_time = gettime_ms() + (unsigned long)philo->data->tt_slp * 1000;
-	while (philo->tmp_time < sleep_time)
-	{
-		pthread_mutex_lock(&philo->data->mutstop);
-		if (philo->data->stop == 1)
-		{
-			pthread_mutex_unlock(&philo->data->mutstop);
-			return (1);
-		}
-		pthread_mutex_unlock(&philo->data->mutstop);
-		usleep(philo->data->tt_slp);
-		philo->tmp_time = gettime_ms();
-	}
-	pthread_mutex_lock(&philo->data->print);
-	philo->tmp_time = gettime_ms();
-	printf("%.9lu %d is thinking\n",
-		philo->tmp_time - philo->data->start, philo->index);
-	pthread_mutex_unlock(&philo->data->print);
-	philo->meals++;
+	time = gettime_ms();
+	if (print_messages(philo, "is sleeping"))
+		return (1);
+	if (verify_while_action(philo, philo->data->tt_slp))
+		return (1);
+	time = gettime_ms();
+	if (print_messages(philo, "is thinking"))
+		return (1);
 	return (0);
 }
 
@@ -86,12 +80,11 @@ void	*routine(void *arg)
 	t_philo			*philo;
 
 	philo = (t_philo *)arg;
-	// if (philo->data->n_phil == 1)
-		// philo->dead = 1;
-	if (gettime_ms() - philo->data->start > (unsigned long)philo->data->tt_die * 1000)
+	if (gettime_ms() - philo->data->start > (unsigned long)philo->data->tt_die)
 		return (0);
 	if (philo->index % 2 == 0)
-		usleep(philo->data->tt_eat * 1000);
+		if (verify_while_action(philo, philo->data->tt_eat))
+			return (0);
 	while (1)
 	{
 		if (philo->data->stop == 1)
@@ -100,6 +93,7 @@ void	*routine(void *arg)
 			break ;
 		if (sleeping_thinking(philo))
 			break ;
+		usleep(10);
 	}
 	return (0);
 }

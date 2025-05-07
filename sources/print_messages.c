@@ -12,10 +12,29 @@
 
 #include "../philo.h"
 
-void	print_messages(t_data *data)
+int	print_messages(t_philo *philo, char *str)
+{
+	unsigned long	currentime;
+
+	currentime = gettime_ms();
+	pthread_mutex_lock(&philo->data->mutstop);
+	if (philo->data->stop == 1)
+	{
+		pthread_mutex_unlock(&philo->data->mutstop);
+		return (1);
+	}
+	pthread_mutex_lock(&philo->data->print);
+	printf("%lu %d %s\n", currentime - philo->data->start,
+		philo->index, str);
+	pthread_mutex_unlock(&philo->data->print);
+	pthread_mutex_unlock(&philo->data->mutstop);
+	return (0);
+}
+
+void	print_status(t_data *data)
 {
 	printf("Number of philosophers: %s%d%s\n", YELLOW, data->n_phil, NC);
 	printf("N of times each philosophers must eat: %s%d%s\n",
 		YELLOW, data->nt_eat, NC);
-	printf("Total lunches: %s%d%s\n", YELLOW, data->lunches, NC);
+	printf("total: %s%d%s\n", YELLOW, data->nt_eat * data->n_phil, NC);
 }

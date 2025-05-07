@@ -30,7 +30,7 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 	if (!data->forks)
 	{
 		free(th);
-		ft_free_tab((void *)philo, data->n_phil);
+		ft_free_tab((void *)*philo, data->n_phil);
 		return (1);
 	}
 	init_philos(data);
@@ -42,11 +42,7 @@ int	main(int argc, char **argv)
 	pthread_t	*th;
 	t_data		data;
 	t_philo		*philo;
-	int			flag;
-	int			i;
 
-	i = 0;
-	flag = 0;
 	if (argc < 5 || argc > 6)
 		return (1);
 	if (init_data(&philo, argv, &data, &th))
@@ -58,9 +54,9 @@ int	main(int argc, char **argv)
 	manager(&data, argc);
 	join_threads(&data, th);
 	pthread_mutex_destroy(data.forks);
-	// ft_free_tab((void *)th, data.n_phil);
-	// ft_free_tab((void *)data.forks, data.n_phil);
-	// ft_free_tab((void *)philo, data.n_phil);
-	print_messages(&data); //tmp a retirer
+	free(th);
+	free(data.forks);
+	free(philo);
+	print_status(&data); //tmp a retirer
 	return (0);
 }

@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -11,19 +12,6 @@
 /* ************************************************************************** */
 #include "../philo.h"
 
-void	ft_free_philo(t_philo **philo, int limit)
-{
-	int	i;
-
-	i = 0;
-	while (i < limit)
-	{
-		free(philo[i]);
-		i++;
-	}
-	free(philo);
-}
-
 void	init_philos(t_data *data)
 {
 	int	i;
@@ -34,7 +22,6 @@ void	init_philos(t_data *data)
 		pthread_mutex_init(&data->forks[i], NULL);
 		data->philos[i].meals = 0;
 		data->philos[i].index = i + 1;
-		data->philos[i].tmp_time = 0;
 		data->philos[i].last_meal = gettime_ms();
 		data->philos[i].data = data;
 		data->philos[i].l_fork = &data->forks[i];
