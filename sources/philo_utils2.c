@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 18:13:43 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/06 16:18:27 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/08 16:48:58 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
@@ -20,7 +19,7 @@ void	init_philos(t_data *data)
 	while (i < data->n_phil)
 	{
 		pthread_mutex_init(&data->forks[i], NULL);
-		data->philos[i].meals = 0;
+		data->philos[i].meals = data->nt_eat;
 		data->philos[i].index = i + 1;
 		data->philos[i].last_meal = gettime_ms();
 		data->philos[i].data = data;

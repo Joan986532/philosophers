@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 11:05:31 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/05 11:55:32 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/08 16:58:11 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,25 +16,35 @@ int	print_messages(t_philo *philo, char *str)
 {
 	unsigned long	currentime;
 
-	currentime = gettime_ms();
-	pthread_mutex_lock(&philo->data->mutstop);
+	pthread_mutex_lock(&philo->data->print);
 	if (philo->data->stop == 1)
 	{
-		pthread_mutex_unlock(&philo->data->mutstop);
+		pthread_mutex_unlock(&philo->data->print);
 		return (1);
 	}
-	pthread_mutex_lock(&philo->data->print);
+	currentime = gettime_ms();
 	printf("%lu %d %s\n", currentime - philo->data->start,
 		philo->index, str);
 	pthread_mutex_unlock(&philo->data->print);
-	pthread_mutex_unlock(&philo->data->mutstop);
 	return (0);
 }
 
-void	print_status(t_data *data)
+int	print_messages_eating(t_philo *philo, char *str)
 {
-	printf("Number of philosophers: %s%d%s\n", YELLOW, data->n_phil, NC);
-	printf("N of times each philosophers must eat: %s%d%s\n",
-		YELLOW, data->nt_eat, NC);
-	printf("total: %s%d%s\n", YELLOW, data->nt_eat * data->n_phil, NC);
+	unsigned long	currentime;
+
+	pthread_mutex_lock(&philo->data->print);
+	if (philo->data->stop == 1)
+	{
+		pthread_mutex_unlock(&philo->data->print);
+		return (1);
+	}
+	currentime = gettime_ms();
+	printf("%lu %d %s\n", currentime - philo->data->start,
+		philo->index, str);
+	philo->meals--;
+	if (philo->meals < 0)
+		philo->meals = 0;
+	pthread_mutex_unlock(&philo->data->print);
+	return (0);
 }

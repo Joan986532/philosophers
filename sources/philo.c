@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/06 15:50:47 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/08 16:09:13 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int	main(int argc, char **argv)
 	pthread_t	*th;
 	t_data		data;
 	t_philo		*philo;
+	int			n_th;
 
 	if (argc < 5 || argc > 6)
 		return (1);
@@ -49,14 +50,12 @@ int	main(int argc, char **argv)
 		return (1);
 	pthread_mutex_init(&data.print, NULL);
 	pthread_mutex_init(&data.mutstop, NULL);
-	pthread_mutex_init(&data.check, NULL);
-	create_threads(&data, th);
+	n_th = create_threads(&data, th);
 	manager(&data, argc);
-	join_threads(&data, th);
+	join_threads(th, n_th);
 	pthread_mutex_destroy(data.forks);
 	free(th);
 	free(data.forks);
 	free(philo);
-	print_status(&data); //tmp a retirer
 	return (0);
 }

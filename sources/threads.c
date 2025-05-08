@@ -6,12 +6,12 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 11:53:01 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/06 16:18:12 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/08 16:09:19 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
 
-void	create_threads(t_data *data, pthread_t *th)
+int	create_threads(t_data *data, pthread_t *th)
 {
 	int	i;
 
@@ -20,22 +20,20 @@ void	create_threads(t_data *data, pthread_t *th)
 	while (i < data->n_phil)
 	{
 		if (pthread_create(th + i, NULL, &routine, &data->philos[i]) != 0)
-			exit(1);
+			break ;
 		i++;
-		usleep(100);
 	}
+	return (i);
 }
 
-void	join_threads(t_data *data, pthread_t *th)
+void	join_threads(pthread_t *th, int n_th)
 {
 	int	i;
 
 	i = 0;
-	while (i < data->n_phil)
+	while (i < n_th)
 	{
-		if (pthread_join(th[i], NULL) != 0)
-			exit(1);
+		pthread_join(th[i], NULL);
 		i++;
-		usleep(100);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:27:53 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/06 15:45:21 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/08 16:59:02 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_philo	t_philo;
 typedef struct s_data
 {
 	int					n_phil;
+	int					n_thread;
 	int					tt_die;
 	int					tt_eat;
 	int					tt_slp;
@@ -39,8 +40,6 @@ typedef struct s_data
 	t_philo				*philos;
 	pthread_mutex_t		print;
 	pthread_mutex_t		mutstop;
-	pthread_mutex_t		check;
-	pthread_mutex_t		meals;
 	pthread_mutex_t		*forks;
 }						t_data;
 
@@ -50,20 +49,20 @@ typedef struct s_philo
 	pthread_mutex_t	*l_fork;
 	int				index;
 	int				meals;
-	t_data			*data;;
+	t_data			*data;
 	unsigned long	last_meal;
 }					t_philo;
 
 unsigned long	gettime_ms(void);
 void			init_philos(t_data *data);
 int				manager(t_data *data, int argc);
-void			join_threads(t_data *data, pthread_t *th);
+void			join_threads(pthread_t *th, int n_th);
 void			*routine(void *arg);
-void			create_threads(t_data *data, pthread_t *th);
+int				create_threads(t_data *data, pthread_t *th);
 int				ft_parsing(char **argv, t_data *data);
 int				ft_atoi_philo(char *nptr);
-void			print_status(t_data *data);
 int				print_messages(t_philo *philo, char *str);
+int				print_messages_eating(t_philo *philo, char *str);
 void			ft_free_tab(void **tab, int n);
 
 #endif
