@@ -6,19 +6,17 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 15:40:00 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/08 16:59:12 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/09 17:09:20 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
 
 int	verify_while_action(t_philo *philo, unsigned long tt_action)
 {
-	unsigned long	time;
 	unsigned long	timing;
 
-	time = gettime_ms();
-	timing = time + tt_action;
-	while (time < timing)
+	timing = gettime_ms() + tt_action;
+	while (gettime_ms() < timing)
 	{
 		pthread_mutex_lock(&philo->data->print);
 		if (philo->data->stop == 1)
@@ -27,17 +25,13 @@ int	verify_while_action(t_philo *philo, unsigned long tt_action)
 			return (1);
 		}
 		pthread_mutex_unlock(&philo->data->print);
-		usleep(tt_action);
-		time = gettime_ms();
+		usleep(100);
 	}
 	return (0);
 }
 
 int	eat_modulo(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->data->mutstop);
-	philo->last_meal = gettime_ms();
-	pthread_mutex_unlock(&philo->data->mutstop);
 	if (philo->index % 2 == 0)
 		pthread_mutex_lock(philo->l_fork);
 	else
@@ -66,6 +60,11 @@ int	eating(t_philo *philo)
 	result = print_messages(philo, "has taken a fork");
 	if (!result)
 		result = print_messages_eating(philo, "is eating");
+	pthread_mutex_lock(&philo->data->mutmeal);
+	philo->meals++;
+	if (philo->meals > philo->data->nt_eat)
+		philo->meals = philo->data->nt_eat;
+	pthread_mutex_unlock(&philo->data->mutmeal);
 	if (!result)
 		result = verify_while_action(philo, philo->data->tt_eat);
 	pthread_mutex_unlock(philo->l_fork);
@@ -92,9 +91,11 @@ void	*routine(void *arg)
 	philo = (t_philo *)arg;
 	if (gettime_ms() - philo->data->start > (unsigned long)philo->data->tt_die)
 		return (0);
+	if (print_messages(philo, "is thinking"))
+		return (0);
 	if (philo->index % 2 == 0)
-		if (verify_while_action(philo, philo->data->tt_eat))
-			return (0);
+			if (verify_while_action(philo, philo->data->tt_eat))
+				return (0);
 	while (1)
 	{
 		pthread_mutex_lock(&philo->data->print);

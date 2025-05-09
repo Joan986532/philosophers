@@ -6,18 +6,18 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 11:49:44 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/08 17:13:26 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/09 15:27:01 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../philo.h"
 
 int	verify_life(t_philo *philo)
 {
-	unsigned long	time;
+	unsigned int	time;
 
-	pthread_mutex_lock(&philo->data->mutstop);
+	pthread_mutex_lock(&philo->data->mutmeal);
 	time = gettime_ms() - philo->last_meal;
-	pthread_mutex_unlock(&philo->data->mutstop);
+	pthread_mutex_unlock(&philo->data->mutmeal);
 	if (time > (unsigned long)philo->data->tt_die)
 	{
 		pthread_mutex_lock(&philo->data->print);
@@ -25,18 +25,6 @@ int	verify_life(t_philo *philo)
 		printf("%lu %d died\n", gettime_ms() - philo->data->start,
 			philo->index);
 		pthread_mutex_unlock(&philo->data->print);
-		return (1);
-	}
-	return (0);
-}
-
-int	limit_lunches(int lunches, t_data *data)
-{
-	if (lunches >= data->n_phil * data->nt_eat)
-	{
-		pthread_mutex_lock(&data->print);
-		data->stop = 1;
-		pthread_mutex_unlock(&data->print);
 		return (1);
 	}
 	return (0);
@@ -55,13 +43,10 @@ int	manager(t_data *data, int argc)
 		{
 			if (verify_life(&data->philos[i]))
 				return (1);
-			pthread_mutex_lock(&data->print);
-			if (data->philos[i].meals == 0)
-				++lunches;
-			// lunches += data->philos[i].meals;
-			pthread_mutex_unlock(&data->print);
-			// if (argc == 6 && limit_lunches(lunches, data))
-				// return (1);
+			pthread_mutex_lock(&data->mutmeal);
+			if (data->philos[i].meals == data->nt_eat)
+				lunches++;
+			pthread_mutex_unlock(&data->mutmeal);
 			i++;
 		}
 		if (argc == 6 && lunches == data->n_phil)

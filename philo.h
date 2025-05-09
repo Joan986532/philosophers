@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:27:53 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/08 16:59:02 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/09 14:54:38 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct s_data
 	unsigned long		start;
 	t_philo				*philos;
 	pthread_mutex_t		print;
-	pthread_mutex_t		mutstop;
+	pthread_mutex_t		mutmeal;
 	pthread_mutex_t		*forks;
 }						t_data;
 
@@ -63,6 +63,5 @@ int				ft_parsing(char **argv, t_data *data);
 int				ft_atoi_philo(char *nptr);
 int				print_messages(t_philo *philo, char *str);
 int				print_messages_eating(t_philo *philo, char *str);
-void			ft_free_tab(void **tab, int n);
 
 #endif

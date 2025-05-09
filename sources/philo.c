@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:29:48 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/08 16:09:13 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/05/09 15:11:16 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	init_data(t_philo **philo, char **argv, t_data *data, pthread_t **th)
 	if (!data->forks)
 	{
 		free(th);
-		ft_free_tab((void *)*philo, data->n_phil);
+		free(data->philos);
 		return (1);
 	}
 	init_philos(data);
@@ -49,7 +49,7 @@ int	main(int argc, char **argv)
 	if (init_data(&philo, argv, &data, &th))
 		return (1);
 	pthread_mutex_init(&data.print, NULL);
-	pthread_mutex_init(&data.mutstop, NULL);
+	pthread_mutex_init(&data.mutmeal, NULL);
 	n_th = create_threads(&data, th);
 	manager(&data, argc);
 	join_threads(th, n_th);
