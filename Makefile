@@ -6,7 +6,7 @@
 #    By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/01 10:27:31 by jnauroy           #+#    #+#              #
-#    Updated: 2025/05/05 11:56:57 by jnauroy          ###   ########.fr        #
+#    Updated: 2025/05/16 15:23:47 by jnauroy          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,14 +34,14 @@ CFLAGS = -g -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	$(MAKE) -C libft_philo
+	$(MAKE) -s -C libft_philo
 	cc $(OBJECTS) $(LIBFT) $(CFLAGS) -o $(NAME)
 
 clean:
-	$(MAKE) clean -C libft_philo
+	$(MAKE) -s clean -C libft_philo
 	rm -f $(OBJECTS)
 fclean: clean
-	$(MAKE) fclean -C libft_philo
+	$(MAKE) -s fclean -C libft_philo
 	rm -f $(NAME)
 
 re: fclean all
