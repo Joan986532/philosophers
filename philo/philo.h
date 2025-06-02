@@ -6,7 +6,7 @@
 /*   By: jnauroy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 10:27:53 by jnauroy           #+#    #+#             */
-/*   Updated: 2025/05/26 13:57:28 by jnauroy          ###   ########.fr       */
+/*   Updated: 2025/06/02 09:05:18 by jnauroy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ typedef struct s_philo	t_philo;
 typedef struct s_data
 {
 	int					n_phil;
-	int					n_thread;
 	int					tt_die;
 	int					tt_eat;
 	int					tt_slp;
